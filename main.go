@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	// nice stuff, https://github.com/gin-gonic/gin
+	"github.com/andrewerickson/golearn/routes"
 	"gopkg.in/gin-gonic/gin.v1"
 	"html/template"
 	"log"
@@ -20,11 +22,6 @@ var listenAddr = flag.String("addr", "127.0.0.1:1718", "http service address") /
 func myHandler(w http.ResponseWriter, req *http.Request) {
 	log.Output(1, fmt.Sprintf("processing request with form value %v", req.FormValue("s")))
 	templ.Execute(w, req.FormValue("s"))
-}
-
-func getMainPage(c *gin.Context) {
-	log.Output(1, fmt.Sprintf("processing request with form value %v", req.FormValue("s")))
-	templ.Execute(c.String)
 }
 
 var templ = template.Must(template.New("qr").Parse(templateStr))
@@ -45,7 +42,9 @@ func main() {
 	log.Fatal(server.ListenAndServe())
 	*/
 	router := gin.Default()
-	router.GET("/", getMainPage)
+	router.LoadHTMLGlob("templates/*")
+
+	router.GET("/index", routes.GetIndexPage)
 
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
